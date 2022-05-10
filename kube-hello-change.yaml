@@ -9,26 +9,48 @@ spec:
   - protocol: "TCP"
     port: 8080
     targetPort: 8080
-  type: LoadBalancer
-
+  - protocol: "TCP"
+    port: 8081
+    targetPort: 8081
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-python
+  name: hello-python-0
 spec:
   selector:
     matchLabels:
       app: hello-python
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
-        app: hello-python
+        app: hello-python-0
     spec:
       containers:
-      - name: flask-change
-        image: flask-change:latest
+      - name: app0
+        image: app0:latest
         imagePullPolicy: Never
         ports:
         - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-ping-1
+spec:
+  selector:
+    matchLabels:
+      app: hello-python
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hello-python-1
+    spec:
+      containers:
+      - name: app1
+        image: app1:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8081
